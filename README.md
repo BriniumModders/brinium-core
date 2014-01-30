@@ -9,8 +9,8 @@ EXTENSIONS OF BRINIUM:
 
 () Magical
 
-() Transcontinental
+() Continental
 
 () Ornamental
 
-() Transdimensional
+() Dimensional
