@@ -9,7 +9,7 @@ EXTENSIONS OF BRINIUM:
 
 () Magical
 
-() Continental
+() Terrestrial
 
 () Ornamental
 
