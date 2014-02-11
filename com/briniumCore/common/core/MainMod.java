@@ -1,20 +1,36 @@
 package com.briniumCore.common.core;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.EnumHelper;
+import net.minecraftforge.common.MinecraftForge;
+
+import com.briniumCore.common.block.Blocks;
+import com.briniumCore.common.item.Items;
+import com.briniumCore.common.recipe.BrineCraftingRecipes;
+import com.briniumCore.common.registry.GameRegistering;
+import com.briniumCore.common.registry.LanguageRegistering;
+import com.briniumCore.common.registry.OreDictionaring;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "briniumCore", name = "Brinium (CORE)", version = "0.0.1")
+@Mod(modid = "briniumCore", name = "Brinium (CORE)", version = "Alpha 0.0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class MainMod {
+	
+	public static Configuration config;
+	
+    public static EnumToolMaterial briniumTools;
+    
+    public static EnumArmorMaterial briniumArmor;
 	
 	public static CreativeTabs briniumCoreTab = new BrineTab(CreativeTabs.getNextID(), "briniumCore");
 
@@ -24,48 +40,58 @@ public class MainMod {
 	public static int volcaniteIngotID;
 	public static int pandoriteOreID;
 	public static int pandoriteIngotID;
+	public static int briniumAxeID;
+	public static int briniumHoeID;
+	public static int briniumSpadeID;
+	public static int briniumSwordID;
+	public static int briniumPickaxeID;
 	
 	public static Block briniumOre;
 	public static Block volcaniteOre;
 	public static Block pandoriteOre;
 	
+	public static Item briniumIngot;
+	public static Item volcaniteIngot;
+	public static Item pandoriteIngot;
+	
+	public static Item briniumAxe;
+	public static Item briniumHoe;
+	public static Item briniumSpade;
+	public static Item briniumSword;
+	public static Item briniumPickaxe;
+	
 	
 @EventHandler
 public void preInit(FMLPreInitializationEvent event) {
-	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 	
-	config.load();
+	briniumTools = EnumHelper.addToolMaterial("brinium", 4, 1561, 9.0F, 4.0F, 11);
 	
-	config.addCustomCategoryComment(Configuration.CATEGORY_BLOCK, "Note, the ids for the blocks will be lower than the items! This is only to sort out the creative tab!");
-	config.addCustomCategoryComment(Configuration.CATEGORY_ITEM, "(See Blocks Catergory for info)");
+	briniumArmor = EnumHelper.addArmorMaterial("BRINIUM", 34, new int[] {4, 9, 7, 4}, 11);
 	
-	briniumOreID = config.get(Configuration.CATEGORY_BLOCK, "briniumOreID", 4000).getInt();
-	volcaniteOreID = config.get(Configuration.CATEGORY_BLOCK, "volcaniteOreID", 4001).getInt();
-	pandoriteOreID = config.get(Configuration.CATEGORY_BLOCK, "pandoriteOreID", 4002).getInt();
+	config = new Configuration(event.getSuggestedConfigurationFile());
 	
-	briniumIngotID = config.get(Configuration.CATEGORY_ITEM, "briniumIngotID", 4050).getInt();
-	volcaniteIngotID = config.get(Configuration.CATEGORY_ITEM, "volcaniteIngotID", 4051).getInt();
-	pandoriteOreID = config.get(Configuration.CATEGORY_ITEM, "pandoriteOreID", 4052).getInt();
-	
-	config.save();
+	ConfigLoader.generateConfig();
 	
 }
 
 @EventHandler
 public void init(FMLInitializationEvent event) {
-	briniumOre = new Block(briniumOreID, Material.rock).setHardness(3.0F).setResistance(5.0F).setCreativeTab(briniumCoreTab).setUnlocalizedName("brine:briniumOre").setTextureName("brine:briniumOre");
-	volcaniteOre = new Block(volcaniteOreID, Material.rock).setHardness(3.0F).setResistance(5.0F).setCreativeTab(briniumCoreTab).setUnlocalizedName("brine:volcaniteOre").setTextureName("brine:volcaniteOre");
-	pandoriteOre = new Block(pandoriteOreID, Material.rock).setHardness(3.0F).setResistance(5.0F).setCreativeTab(briniumCoreTab).setUnlocalizedName("brine:pandoriteOre").setTextureName("brine:pandoriteOre");
+		
+	Blocks.initiateBlocks();
 	
-	GameRegistry.registerBlock(briniumOre, "briniumOre");
-	GameRegistry.registerBlock(volcaniteOre, "volcaniteOre");
-	GameRegistry.registerBlock(pandoriteOre, "pandoriteOre");
+	Items.initiateItems();
 	
-	LanguageRegistry.addName(briniumOre, "Brinium Ore");
-	LanguageRegistry.addName(volcaniteOre, "Volcanite Ore");
-	LanguageRegistry.addName(pandoriteOre, "Pandorite Ore");
+	GameRegistering.registerObjects();
 	
-	LanguageRegistry.instance().addStringLocalization("itemGroup.briniumCore", "Brinium (Core)");
+	LanguageRegistering.registerLanguageObjects();
+	
+	BrineCraftingRecipes.registerBriniumRecipes();
+	
+	OreDictionaring.addOres();
+	
+	MinecraftForge.setBlockHarvestLevel(briniumOre, "pickaxe", 2);
+	MinecraftForge.setBlockHarvestLevel(volcaniteOre, "pickaxe", 3);
+	MinecraftForge.setBlockHarvestLevel(pandoriteOre, "pickaxe", 4);
 
 }
 
